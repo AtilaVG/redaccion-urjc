@@ -1,13 +1,15 @@
 "use client";
 
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import {
   motion,
   useScroll,
   useTransform,
+  useMotionValueEvent,
   type MotionValue,
 } from "motion/react";
 import { ParticleField } from "@/components/effects/particle-field";
+import { cn } from "@/lib/utils";
 
 const beats = [
   {
@@ -77,6 +79,15 @@ export function Narrative() {
     offset: ["start start", "end end"],
   });
 
+  const [active, setActive] = useState(0);
+  useMotionValueEvent(scrollYProgress, "change", (v) => {
+    const idx = Math.min(
+      beats.length - 1,
+      Math.max(0, Math.floor(v * beats.length)),
+    );
+    setActive(idx);
+  });
+
   return (
     <section
       id="historia"
@@ -103,42 +114,17 @@ export function Narrative() {
 
         {/* progress rail */}
         <div className="absolute bottom-10 left-1/2 flex -translate-x-1/2 gap-2">
-          {beats.map((_, i) => {
-            const seg = 1 / beats.length;
-            return (
-              <Dot
-                key={i}
-                progress={scrollYProgress}
-                start={i * seg}
-                seg={seg}
-              />
-            );
-          })}
+          {beats.map((_, i) => (
+            <span
+              key={i}
+              className={cn(
+                "from-cyan to-violet h-1.5 rounded-full bg-gradient-to-r transition-all duration-500",
+                i === active ? "w-9 opacity-100" : "w-2.5 opacity-30",
+              )}
+            />
+          ))}
         </div>
       </div>
     </section>
-  );
-}
-
-function Dot({
-  progress,
-  start,
-  seg,
-}: {
-  progress: MotionValue<number>;
-  start: number;
-  seg: number;
-}) {
-  const w = useTransform(progress, [start, start + seg], [10, 36]);
-  const opacity = useTransform(
-    progress,
-    [start - 0.05, start, start + seg, start + seg + 0.05],
-    [0.3, 1, 1, 0.3],
-  );
-  return (
-    <motion.span
-      style={{ width: w, opacity }}
-      className="from-cyan to-violet h-1.5 rounded-full bg-gradient-to-r"
-    />
   );
 }
