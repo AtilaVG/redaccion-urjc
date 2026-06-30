@@ -13,19 +13,19 @@ import { cn } from "@/lib/utils";
 
 const beats = [
   {
-    kicker: "01 — La señal",
+    kicker: "01 — La idea",
     title: "Todo empieza con una pregunta",
-    body: "En cada pasillo, en cada laboratorio y en cada asamblea hay una historia esperando ser contada. Nosotros la encontramos.",
+    body: "En cada laboratorio, aula y biblioteca de la URJC nace conocimiento. Nuestra misión es darle forma de publicación.",
   },
   {
-    kicker: "02 — La misión",
-    title: "Periodismo hecho por estudiantes",
-    body: "Sin intermediarios. La comunidad universitaria toma el micrófono para narrar lo que de verdad importa en el campus.",
+    kicker: "02 — El proceso",
+    title: "Rigor, revisión y acceso abierto",
+    body: "Evaluación por pares, edición cuidada y licencias abiertas. Publicamos para que el saber circule sin barreras.",
   },
   {
     kicker: "03 — El impacto",
-    title: "Una redacción que se siente viva",
-    body: "Tecnología inmersiva, datos abiertos y mirada crítica. Entrar aquí es entrar en el pulso de la URJC.",
+    title: "Conocimiento que deja huella",
+    body: "DOI, preservación y difusión internacional. Cada obra encuentra a quien la necesita, hoy y dentro de décadas.",
   },
 ];
 

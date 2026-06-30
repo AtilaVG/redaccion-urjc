@@ -11,52 +11,60 @@
 :root {
   --radius: 0.875rem;
 
-  /* Brand palette */
-  --void: #04050a;
-  --void-2: #080a14;
-  --crimson: #e11d48; /* URJC nod */
-  --cyan: #22d3ee;
-  --violet: #8b5cf6;
-  --amber: #fbbf24;
+  /* Brand palette — colores institucionales URJC (granate · oro · rojo) */
+  --void: #0a0507;
+  --void-2: #140a0d;
+  --garnet: #9e1b32; /* granate URJC */
+  --red: #c8102e; /* rojo URJC */
+  --gold: #c9a227; /* oro académico */
+  --burgundy: #5a0f1e;
+
+  /* Alias para las utilidades existentes (mapeadas a la marca URJC) */
+  --crimson: var(--red);
+  --violet: var(--garnet);
+  --cyan: var(--gold);
+  --amber: #d4a017;
 
   /* Light theme semantic tokens */
-  --background: #f7f8fb;
-  --foreground: #0a0c14;
+  --background: #faf7f4;
+  --foreground: #140a0d;
   --card: #ffffff;
-  --card-foreground: #0a0c14;
+  --card-foreground: #140a0d;
   --popover: #ffffff;
-  --popover-foreground: #0a0c14;
-  --primary: #6d28d9;
+  --popover-foreground: #140a0d;
+  --primary: #9e1b32;
   --primary-foreground: #ffffff;
-  --secondary: #0e7490;
+  --secondary: #8a6d12;
   --secondary-foreground: #ffffff;
-  --muted: #eef0f6;
-  --muted-foreground: #5b6478;
-  --accent: #e11d48;
+  --muted: #f2ece9;
+  --muted-foreground: #6b5a5e;
+  --accent: #c8102e;
   --accent-foreground: #ffffff;
-  --border: #e3e6ef;
-  --input: #e3e6ef;
-  --ring: #8b5cf6;
+  --border: #e7ddd9;
+  --input: #e7ddd9;
+  --ring: #9e1b32;
 }
 
 .dark {
-  --background: #04050a;
-  --foreground: #eef1fb;
-  --card: #0a0d18;
-  --card-foreground: #eef1fb;
-  --popover: #0a0d18;
-  --popover-foreground: #eef1fb;
-  --primary: #a78bfa;
-  --primary-foreground: #0a0c14;
-  --secondary: #22d3ee;
-  --secondary-foreground: #04050a;
-  --muted: #11131f;
-  --muted-foreground: #9aa3bd;
-  --accent: #fb7185;
-  --accent-foreground: #04050a;
-  --border: #1b1f30;
-  --input: #1b1f30;
-  --ring: #8b5cf6;
+  --background: #0a0507;
+  --foreground: #f7efe9;
+  --card: #170c10;
+  --card-foreground: #f7efe9;
+  --popover: #170c10;
+  --popover-foreground: #f7efe9;
+  --primary: #d4516a;
+  --primary-foreground: #14080b;
+  --secondary: #d9b44a;
+  --secondary-foreground: #0a0507;
+  --muted: #1c1014;
+  --muted-foreground: #b8a39a;
+  /* Granate de texto más claro para legibilidad sobre fondo oscuro */
+  --violet: #d4516a;
+  --accent: #ec5a72;
+  --accent-foreground: #0a0507;
+  --border: #2a1820;
+  --input: #2a1820;
+  --ring: #d4516a;
 }
 
 @theme inline {
@@ -83,6 +91,10 @@
   --color-cyan: var(--cyan);
   --color-violet: var(--violet);
   --color-amber: var(--amber);
+  --color-garnet: var(--garnet);
+  --color-gold: var(--gold);
+  --color-red: var(--red);
+  --color-burgundy: var(--burgundy);
 
   --font-sans: var(--font-inter);
   --font-display: var(--font-space);

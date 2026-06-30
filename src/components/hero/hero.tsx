@@ -77,7 +77,7 @@ export function Hero() {
               <span className="bg-crimson absolute inline-flex h-full w-full animate-ping rounded-full opacity-75" />
               <span className="bg-crimson relative inline-flex h-2 w-2 rounded-full" />
             </span>
-            EN DIRECTO · {siteConfig.university}
+            ACCESO ABIERTO · {siteConfig.university}
           </Badge>
         </motion.div>
 
@@ -89,7 +89,7 @@ export function Hero() {
           onScroll={false}
           className="font-display text-5xl leading-[0.95] font-bold text-balance text-white sm:text-7xl md:text-8xl"
         >
-          REDACCIÓN URJC
+          EDICIONES URJC
         </SplitText>
 
         <motion.p
@@ -109,18 +109,18 @@ export function Hero() {
         >
           <Magnetic>
             <Button asChild size="lg" variant="primary" data-cursor="hover">
-              <Link href="#noticias">
+              <Link href="#colecciones">
                 <Newspaper className="size-4" />
-                Entrar a la redacción
+                Explorar el catálogo
                 <ArrowRight className="size-4" />
               </Link>
             </Button>
           </Magnetic>
           <Magnetic strength={0.25}>
             <Button asChild size="lg" variant="glass" data-cursor="hover">
-              <Link href="#equipo">
+              <Link href="/publica/normas-de-envio">
                 <Sparkles className="size-4" />
-                Conoce al equipo
+                Publica con nosotros
               </Link>
             </Button>
           </Magnetic>

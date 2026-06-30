@@ -8,32 +8,32 @@ import { SectionHeading } from "./section-heading";
 const team = [
   {
     name: "Lucía Marín",
-    role: "Redactora jefa",
+    role: "Dirección editorial",
     img: "https://i.pravatar.cc/240?img=47",
   },
   {
     name: "Diego Ferrer",
-    role: "Tecnología",
+    role: "Edición digital",
     img: "https://i.pravatar.cc/240?img=12",
   },
   {
     name: "Noa Sánchez",
-    role: "Cultura",
+    role: "Producción",
     img: "https://i.pravatar.cc/240?img=32",
   },
   {
     name: "Hugo Belmonte",
-    role: "Deportes",
+    role: "Difusión y métricas",
     img: "https://i.pravatar.cc/240?img=15",
   },
   {
     name: "Ariadna Vega",
-    role: "Investigación",
+    role: "Gestión científica",
     img: "https://i.pravatar.cc/240?img=5",
   },
   {
     name: "Mateo Ríos",
-    role: "Audiovisual",
+    role: "Diseño y maquetación",
     img: "https://i.pravatar.cc/240?img=51",
   },
 ];
@@ -45,9 +45,9 @@ export function Team() {
       className="relative mx-auto max-w-6xl px-6 py-24 sm:py-32"
     >
       <SectionHeading
-        kicker="Equipo"
-        title="Las voces detrás de la redacción"
-        description="Estudiantes de toda la URJC que convierten la curiosidad en periodismo."
+        kicker="Quiénes somos"
+        title="El equipo que da forma a cada publicación"
+        description="Profesionales de la edición académica al servicio de la comunidad investigadora de la URJC."
         align="center"
         className="mb-14 items-center"
       />

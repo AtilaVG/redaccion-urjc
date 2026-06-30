@@ -23,9 +23,9 @@ function EnergyOrb() {
       uTime: { value: 0 },
       uDistort: { value: 0.42 },
       uHover: { value: 0 },
-      uColorA: { value: new THREE.Color("#4c1d95") },
-      uColorB: { value: new THREE.Color("#22d3ee") },
-      uColorC: { value: new THREE.Color("#e11d48") },
+      uColorA: { value: new THREE.Color("#5a0f1e") },
+      uColorB: { value: new THREE.Color("#c9a227") },
+      uColorC: { value: new THREE.Color("#c8102e") },
     }),
     [],
   );
@@ -90,7 +90,7 @@ function Starfield({ count = 1400 }: { count?: number }) {
       <pointsMaterial
         size={0.035}
         sizeAttenuation
-        color="#a5b4fc"
+        color="#e9cfa3"
         transparent
         opacity={0.85}
         depthWrite={false}
@@ -111,7 +111,7 @@ function Shards() {
         ] as [number, number, number],
         scale: 0.12 + Math.random() * 0.18,
         speed: 0.5 + Math.random(),
-        color: ["#22d3ee", "#8b5cf6", "#e11d48"][i % 3],
+        color: ["#c9a227", "#9e1b32", "#c8102e"][i % 3],
       })),
     [],
   );
@@ -160,13 +160,13 @@ export default function HeroScene() {
       gl={{ antialias: true, alpha: true, powerPreference: "high-performance" }}
       className="!absolute inset-0"
     >
-      <color attach="background" args={["#04050a"]} />
-      <fog attach="fog" args={["#04050a", 8, 20]} />
+      <color attach="background" args={["#0a0507"]} />
+      <fog attach="fog" args={["#0a0507", 8, 20]} />
 
       <ambientLight intensity={0.4} />
-      <pointLight position={[5, 5, 5]} intensity={40} color="#22d3ee" />
-      <pointLight position={[-5, -3, 2]} intensity={30} color="#8b5cf6" />
-      <pointLight position={[0, 4, -4]} intensity={20} color="#e11d48" />
+      <pointLight position={[5, 5, 5]} intensity={40} color="#c9a227" />
+      <pointLight position={[-5, -3, 2]} intensity={30} color="#9e1b32" />
+      <pointLight position={[0, 4, -4]} intensity={22} color="#c8102e" />
 
       <EnergyOrb />
       <Shards />

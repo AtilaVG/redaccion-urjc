@@ -1,17 +1,17 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
   <defs>
     <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0" stop-color="#04050a"/>
-      <stop offset="1" stop-color="#0a0d18"/>
+      <stop offset="0" stop-color="#0a0507"/>
+      <stop offset="1" stop-color="#170c10"/>
     </linearGradient>
     <linearGradient id="txt" x1="0" y1="0" x2="1" y2="0">
-      <stop offset="0" stop-color="#22d3ee"/>
-      <stop offset="0.5" stop-color="#8b5cf6"/>
-      <stop offset="1" stop-color="#e11d48"/>
+      <stop offset="0" stop-color="#c9a227"/>
+      <stop offset="0.5" stop-color="#9e1b32"/>
+      <stop offset="1" stop-color="#c8102e"/>
     </linearGradient>
     <radialGradient id="glow" cx="0.7" cy="0.3" r="0.6">
-      <stop offset="0" stop-color="#8b5cf6" stop-opacity="0.45"/>
-      <stop offset="1" stop-color="#8b5cf6" stop-opacity="0"/>
+      <stop offset="0" stop-color="#9e1b32" stop-opacity="0.55"/>
+      <stop offset="1" stop-color="#9e1b32" stop-opacity="0"/>
     </radialGradient>
   </defs>
   <rect width="1200" height="630" fill="url(#bg)"/>
@@ -25,8 +25,8 @@
     <circle cx="32" cy="32" r="22" fill="none" stroke="url(#txt)" stroke-width="6"/>
     <circle cx="32" cy="32" r="8" fill="url(#txt)"/>
   </g>
-  <text x="90" y="200" font-family="Arial, sans-serif" font-size="26" letter-spacing="8" fill="#22d3ee">EN DIRECTO · UNIVERSIDAD REY JUAN CARLOS</text>
-  <text x="180" y="300" font-family="Arial, sans-serif" font-size="96" font-weight="bold" fill="#ffffff">REDACCIÓN</text>
-  <text x="180" y="410" font-family="Arial, sans-serif" font-size="96" font-weight="bold" fill="url(#txt)">URJC</text>
-  <text x="90" y="520" font-family="Arial, sans-serif" font-size="30" fill="#9aa3bd">Donde el campus se convierte en historia</text>
+  <text x="90" y="200" font-family="Arial, sans-serif" font-size="24" letter-spacing="7" fill="#c9a227">UNIVERSIDAD REY JUAN CARLOS · PUBLICACIONES</text>
+  <text x="180" y="300" font-family="Arial, sans-serif" font-size="92" font-weight="bold" fill="#ffffff">EDICIONES</text>
+  <text x="180" y="406" font-family="Arial, sans-serif" font-size="92" font-weight="bold" fill="url(#txt)">URJC</text>
+  <text x="90" y="516" font-family="Arial, sans-serif" font-size="29" fill="#b8a39a">Conocimiento abierto · revistas, monografías y colecciones</text>
 </svg>

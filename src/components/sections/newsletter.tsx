@@ -52,11 +52,11 @@ export function Newsletter() {
               <Sparkles className="size-3.5" /> Newsletter
             </span>
             <h2 className="font-display mt-4 text-4xl leading-tight font-bold text-balance sm:text-5xl">
-              Recibe el campus en tu bandeja
+              Novedades editoriales en tu bandeja
             </h2>
             <p className="text-muted-foreground mt-4 max-w-md text-pretty">
-              Cada semana, una selección de los mejores reportajes, datos y
-              cultura de la URJC. Sin spam, solo buen periodismo.
+              Cada mes, las últimas publicaciones, convocatorias y recursos para
+              autores de Ediciones URJC. Sin spam, solo conocimiento abierto.
             </p>
           </Reveal>
 

@@ -31,10 +31,10 @@ export function ParticleField({ className }: { className?: string }) {
       background: { color: "transparent" },
       particles: {
         number: { value: 60, density: { enable: true } },
-        color: { value: ["#22d3ee", "#8b5cf6", "#e11d48"] },
+        color: { value: ["#c9a227", "#9e1b32", "#c8102e"] },
         links: {
           enable: true,
-          color: "#6366f1",
+          color: "#9e1b32",
           distance: 140,
           opacity: 0.18,
           width: 1,

@@ -1,40 +1,52 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { AnimatePresence, motion } from "motion/react";
-import { NewsCard } from "@/components/news/news-card";
+import { ArrowRight } from "lucide-react";
+import { PublicationCard } from "@/components/collections/publication-card";
 import { SectionHeading } from "./section-heading";
 import { Reveal } from "@/components/animations/reveal";
-import { categories, getLatest, type CategorySlug } from "@/lib/news";
+import { Button } from "@/components/ui/button";
+import { collections, getLatest, type CollectionSlug } from "@/lib/collections";
 import { cn } from "@/lib/utils";
 
-type Filter = "all" | CategorySlug;
+type Filter = "all" | CollectionSlug;
 
-export function NewsGrid() {
+export function Novedades() {
   const [filter, setFilter] = useState<Filter>("all");
   const all = getLatest();
   const filtered =
-    filter === "all" ? all : all.filter((a) => a.category === filter);
+    filter === "all" ? all : all.filter((p) => p.collection === filter);
 
   const filters: { key: Filter; label: string }[] = [
-    { key: "all", label: "Todo" },
-    ...categories.map((c) => ({ key: c.slug as Filter, label: c.name })),
+    { key: "all", label: "Todas" },
+    ...collections.map((c) => ({ key: c.slug as Filter, label: c.name })),
   ];
 
   return (
     <section
-      id="noticias"
-      className="relative mx-auto max-w-6xl px-6 py-24 sm:py-32"
+      id="novedades"
+      className="relative mx-auto max-w-7xl px-6 py-24 sm:py-32"
     >
       <div className="flex flex-col gap-8 sm:flex-row sm:items-end sm:justify-between">
         <SectionHeading
-          kicker="Tablón"
-          title="Las últimas del campus"
-          description="Filtra por sección y sumérgete en la actualidad universitaria."
+          kicker="Novedades"
+          title="Lo último publicado en abierto"
+          description="Filtra por colección y descubre las incorporaciones más recientes al catálogo."
         />
+        <Button
+          asChild
+          variant="outline"
+          size="sm"
+          className="hidden sm:inline-flex"
+        >
+          <Link href="/colecciones">
+            Ver todas las colecciones <ArrowRight className="size-4" />
+          </Link>
+        </Button>
       </div>
 
-      {/* Filter pills */}
       <Reveal className="mt-10">
         <div className="flex flex-wrap gap-2">
           {filters.map((f) => (
@@ -51,8 +63,8 @@ export function NewsGrid() {
             >
               {filter === f.key && (
                 <motion.span
-                  layoutId="filter-pill"
-                  className="from-violet to-cyan absolute inset-0 -z-10 rounded-full bg-gradient-to-r"
+                  layoutId="novedades-pill"
+                  className="from-garnet to-red absolute inset-0 -z-10 rounded-full bg-gradient-to-r"
                   transition={{ type: "spring", stiffness: 320, damping: 30 }}
                 />
               )}
@@ -67,16 +79,16 @@ export function NewsGrid() {
         className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3"
       >
         <AnimatePresence mode="popLayout">
-          {filtered.map((article, i) => (
+          {filtered.map((publication, i) => (
             <motion.div
-              key={article.slug}
+              key={publication.slug}
               layout
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.9 }}
               transition={{ duration: 0.4, delay: (i % 3) * 0.05 }}
             >
-              <NewsCard article={article} priority={i < 3} />
+              <PublicationCard publication={publication} priority={i < 3} />
             </motion.div>
           ))}
         </AnimatePresence>

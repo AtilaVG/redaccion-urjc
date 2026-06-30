@@ -8,7 +8,7 @@ export default function Loading() {
           <span className="bg-crimson absolute inset-1/2 size-2 -translate-x-1/2 -translate-y-1/2 rounded-full" />
         </div>
         <p className="text-muted-foreground font-mono text-xs tracking-[0.3em] uppercase">
-          Cargando redacción…
+          Cargando Ediciones URJC…
         </p>
       </div>
     </div>
