@@ -1,36 +1,89 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+<div align="center">
 
-## Getting Started
+# 🛰️ Redacción URJC
 
-First, run the development server:
+### Donde el campus se convierte en historia
+
+Una experiencia web inmersiva de nivel _Awwwards_ para el medio digital de los
+estudiantes de la **Universidad Rey Juan Carlos**. Mezcla un portal de noticias
+premium, una experiencia interactiva en 3D y la pantalla inicial de un
+videojuego AAA.
+
+</div>
+
+---
+
+## ✨ Características
+
+- **Hero cinematográfico en 3D** — orbe de energía con shaders GLSL (ruido
+  simplex + fresnel), campo de estrellas, fragmentos flotantes, rig de cámara
+  con parallax y postprocesado (Bloom, aberración cromática, viñeta).
+- **Scroll narrativo** — manifiesto con _storytelling_ por capítulos sobre un
+  campo de partículas interactivo (tsParticles).
+- **Glassmorphism** y bordes cónicos animados en toda la interfaz.
+- **Tarjetas con hover 3D** — tilt con perspectiva real y _glare_ dinámico.
+- **Animaciones de texto** con SplitType + GSAP ScrollTrigger.
+- **Smooth scrolling** con Lenis sincronizado con GSAP.
+- **Microinteracciones**: cursor personalizado, botones magnéticos, contadores
+  animados, barra de progreso de lectura, ticker de última hora.
+- **Modo claro/oscuro** con `next-themes`.
+- **Noticias y artículos en MDX** con rutas estáticas (SSG).
+- **Formulario** de newsletter con React Hook Form + Zod.
+- **SEO completo**: metadata, Open Graph, Twitter cards, JSON-LD (NewsArticle),
+  sitemap y robots dinámicos, manifest PWA.
+- **Accesibilidad y rendimiento**: respeta `prefers-reduced-motion`, degrada el
+  3D en móviles/dispositivos modestos y carga la escena de forma diferida.
+
+## 🧱 Stack
+
+| Área         | Tecnologías                                                               |
+| ------------ | ------------------------------------------------------------------------- |
+| Framework    | Next.js 15 (App Router) · TypeScript · React 19                           |
+| Estilos      | Tailwind CSS v4 · shadcn/ui · Lucide · next-themes                        |
+| Animación    | GSAP + ScrollTrigger · Motion · Lenis · SplitType                         |
+| 3D / efectos | React Three Fiber · three.js · drei · postprocessing · GLSL · tsParticles |
+| Datos        | MDX (`next-mdx-remote`) · contenido tipado                                |
+| Estado/forms | Zustand · React Hook Form · Zod                                           |
+| Calidad      | ESLint · Prettier · Husky · lint-staged                                   |
+
+## 🚀 Desarrollo
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
+npm run dev      # http://localhost:3000
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### Scripts
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+| Comando             | Descripción            |
+| ------------------- | ---------------------- |
+| `npm run dev`       | Servidor de desarrollo |
+| `npm run build`     | Build de producción    |
+| `npm run start`     | Sirve el build         |
+| `npm run lint`      | ESLint                 |
+| `npm run typecheck` | Comprobación de tipos  |
+| `npm run format`    | Formatea con Prettier  |
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## 📝 Añadir una noticia
 
-## Learn More
+1. Añade los metadatos del artículo en `src/lib/news.ts`.
+2. Crea el cuerpo en `content/noticias/<slug>.mdx`.
 
-To learn more about Next.js, take a look at the following resources:
+La ruta `/noticias/<slug>` se genera estáticamente de forma automática.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## ☁️ Deploy
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Optimizado para **Vercel** (cero configuración). También compatible con Netlify.
 
-## Deploy on Vercel
+```bash
+# Vercel
+npx vercel --prod
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Recuerda actualizar `siteConfig.url` en `src/lib/site.ts` con tu dominio final.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+---
+
+<div align="center">
+Proyecto estudiantil · Universidad Rey Juan Carlos
+</div>
