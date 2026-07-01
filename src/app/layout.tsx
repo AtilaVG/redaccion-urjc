@@ -1,7 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Space_Grotesk, Inter, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
-import { ThemeProvider } from "@/components/providers/theme-provider";
 import { SmoothScroll } from "@/components/providers/smooth-scroll";
 import { ScrollProgress } from "@/components/chrome/scroll-progress";
 import { CustomCursor } from "@/components/chrome/custom-cursor";
@@ -24,11 +23,8 @@ const mono = JetBrains_Mono({
 });
 
 export const viewport: Viewport = {
-  themeColor: [
-    { media: "(prefers-color-scheme: dark)", color: "#0a0507" },
-    { media: "(prefers-color-scheme: light)", color: "#faf7f4" },
-  ],
-  colorScheme: "dark light",
+  themeColor: "#0a0507",
+  colorScheme: "dark",
 };
 
 export const metadata: Metadata = {
@@ -72,22 +68,15 @@ export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="es" suppressHydrationWarning>
+    <html lang="es" className="dark" suppressHydrationWarning>
       <body
         className={`${space.variable} ${inter.variable} ${mono.variable} noise font-sans antialiased`}
       >
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="dark"
-          enableSystem={false}
-          disableTransitionOnChange
-        >
-          <SmoothScroll>
-            <ScrollProgress />
-            <CustomCursor />
-            {children}
-          </SmoothScroll>
-        </ThemeProvider>
+        <SmoothScroll>
+          <ScrollProgress />
+          <CustomCursor />
+          {children}
+        </SmoothScroll>
       </body>
     </html>
   );

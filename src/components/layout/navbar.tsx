@@ -12,7 +12,6 @@ import {
   Library,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { ThemeToggle } from "./theme-toggle";
 import { navItems, type NavItem } from "@/lib/nav";
 import { cn } from "@/lib/utils";
 
@@ -75,7 +74,6 @@ export function Navbar() {
           </div>
 
           <div className="flex items-center gap-2">
-            <ThemeToggle className="hidden sm:flex" />
             <Button
               asChild
               size="sm"
@@ -332,8 +330,7 @@ function MobileMenu({ open, onClose }: { open: boolean; onClose: () => void }) {
               );
             })}
 
-            <div className="mt-6 flex items-center gap-3">
-              <ThemeToggle />
+            <div className="mt-6">
               <Button asChild variant="primary" onClick={onClose}>
                 <Link href="/publica/normas-de-envio">
                   Publicar con nosotros
