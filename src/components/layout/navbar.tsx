@@ -11,6 +11,7 @@ import {
   ArrowUpRight,
   Library,
 } from "lucide-react";
+import { useTheme } from "next-themes";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "./theme-toggle";
 import { navItems, type NavItem } from "@/lib/nav";
@@ -20,8 +21,11 @@ export function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [openIdx, setOpenIdx] = useState<number | null>(null);
+  const [mounted, setMounted] = useState(false);
+  const { resolvedTheme } = useTheme();
 
   useEffect(() => {
+    setMounted(true);
     const onScroll = () => setScrolled(window.scrollY > 24);
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
@@ -35,10 +39,12 @@ export function Navbar() {
     };
   }, [mobileOpen]);
 
-  // At the top of the page the nav floats over the always-dark hero/header,
-  // so its text must stay light regardless of theme. Once scrolled (or a
-  // dropdown opens) the bar gets a glass background and follows the theme.
-  const onDark = !scrolled && openIdx === null;
+  // At the top of the page the nav floats over the hero/header band, which is
+  // dark only in dark mode. In light mode that band is light, so nav text must
+  // follow the theme. Once scrolled (or a dropdown opens) the bar gets a glass
+  // background and always follows the theme.
+  const isDark = !mounted || resolvedTheme !== "light";
+  const onDark = !scrolled && openIdx === null && isDark;
 
   return (
     <>

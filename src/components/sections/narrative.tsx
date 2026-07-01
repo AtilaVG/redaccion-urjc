@@ -62,10 +62,10 @@ function Beat({
       <span className="text-cyan mb-5 font-mono text-xs tracking-[0.4em] uppercase">
         {beat.kicker}
       </span>
-      <h2 className="font-display max-w-4xl text-4xl leading-tight font-bold text-balance text-white sm:text-6xl md:text-7xl">
+      <h2 className="font-display text-foreground max-w-4xl text-4xl leading-tight font-bold text-balance sm:text-6xl md:text-7xl">
         {beat.title}
       </h2>
-      <p className="mt-6 max-w-xl text-base text-pretty text-white/60 sm:text-lg">
+      <p className="text-foreground/60 mt-6 max-w-xl text-base text-pretty sm:text-lg">
         {beat.body}
       </p>
     </motion.div>
@@ -92,12 +92,12 @@ export function Narrative() {
     <section
       id="historia"
       ref={ref}
-      className="bg-void relative h-[320vh]"
+      className="bg-background relative h-[320vh]"
       aria-label="Manifiesto de la redacción"
     >
       <div className="sticky top-0 flex h-[100svh] items-center justify-center overflow-hidden">
         <ParticleField className="absolute inset-0" />
-        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_30%,var(--void)_85%)]" />
+        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_30%,var(--background)_85%)]" />
         <div className="pointer-events-none absolute top-1/2 left-1/2 h-[50vmin] w-[50vmin] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[radial-gradient(circle,color-mix(in_oklab,var(--violet)_40%,transparent),transparent_70%)] blur-3xl" />
 
         <div className="relative h-[60vh] w-full max-w-5xl">

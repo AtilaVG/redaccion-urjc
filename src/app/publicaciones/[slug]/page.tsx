@@ -111,6 +111,7 @@ export default async function PublicationPage({
             className="object-cover opacity-60"
           />
           <div className="from-void via-void/75 to-void/30 absolute inset-0 bg-gradient-to-t" />
+          <div className="from-background pointer-events-none absolute inset-x-0 top-0 h-28 bg-gradient-to-b to-transparent" />
           <div className="grid-lines absolute inset-0 opacity-30" />
           <div className="relative z-10 mx-auto w-full max-w-3xl px-6 pt-32 pb-16">
             <Link

@@ -152,7 +152,13 @@ function CameraRig() {
   return null;
 }
 
-export default function HeroScene() {
+export default function HeroScene({
+  background = "#0a0507",
+  vignette = 0.85,
+}: {
+  background?: string;
+  vignette?: number;
+}) {
   return (
     <Canvas
       dpr={[1, 1.8]}
@@ -160,8 +166,8 @@ export default function HeroScene() {
       gl={{ antialias: true, alpha: true, powerPreference: "high-performance" }}
       className="!absolute inset-0"
     >
-      <color attach="background" args={["#0a0507"]} />
-      <fog attach="fog" args={["#0a0507", 8, 20]} />
+      <color attach="background" args={[background]} />
+      <fog attach="fog" args={[background, 8, 20]} />
 
       <ambientLight intensity={0.4} />
       <pointLight position={[5, 5, 5]} intensity={40} color="#c9a227" />
@@ -190,7 +196,7 @@ export default function HeroScene() {
           radialModulation={false}
           modulationOffset={0}
         />
-        <Vignette eskil={false} offset={0.25} darkness={0.85} />
+        <Vignette eskil={false} offset={0.25} darkness={vignette} />
       </EffectComposer>
     </Canvas>
   );

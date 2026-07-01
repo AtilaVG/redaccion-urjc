@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import dynamic from "next/dynamic";
 import Link from "next/link";
+import { useTheme } from "next-themes";
 import { motion, useScroll, useTransform } from "motion/react";
 import { ArrowRight, Newspaper, Sparkles, ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -18,7 +19,13 @@ const HeroScene = dynamic(() => import("./hero-scene"), {
 
 export function Hero() {
   const [show3D, setShow3D] = useState(false);
+  const [mounted, setMounted] = useState(false);
+  const { resolvedTheme } = useTheme();
   const sectionRef = useRef<HTMLElement>(null);
+
+  const isLight = mounted && resolvedTheme === "light";
+  const sceneBg = isLight ? "#faf7f4" : "#0a0507";
+  const sceneVignette = isLight ? 0.4 : 0.85;
 
   const { scrollYProgress } = useScroll({
     target: sectionRef,
@@ -37,18 +44,19 @@ export function Hero() {
       typeof navigator !== "undefined" &&
       navigator.hardwareConcurrency !== undefined &&
       navigator.hardwareConcurrency < 4;
+    setMounted(true);
     if (!reduced && !smallScreen && !lowCores) setShow3D(true);
   }, []);
 
   return (
     <section
       ref={sectionRef}
-      className="bg-void relative flex min-h-[100svh] items-center justify-center overflow-hidden"
+      className="bg-background relative flex min-h-[100svh] items-center justify-center overflow-hidden"
     >
       {/* 3D scene or CSS fallback */}
       <motion.div style={{ scale: sceneScale }} className="absolute inset-0">
         {show3D ? (
-          <HeroScene />
+          <HeroScene background={sceneBg} vignette={sceneVignette} />
         ) : (
           <div className="absolute inset-0">
             <div className="animate-pulse-glow absolute top-1/2 left-1/2 h-[60vmin] w-[60vmin] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[radial-gradient(circle,var(--violet),transparent_70%)] blur-3xl" />
@@ -58,7 +66,7 @@ export function Hero() {
       </motion.div>
 
       {/* Vignette + grid overlay */}
-      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_35%,var(--void)_92%)]" />
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_35%,var(--background)_92%)]" />
       <div className="grid-lines pointer-events-none absolute inset-0 opacity-60" />
 
       {/* Content */}
@@ -87,7 +95,7 @@ export function Hero() {
           stagger={0.018}
           delay={0.35}
           onScroll={false}
-          className="font-display text-5xl leading-[0.95] font-bold text-balance text-white sm:text-7xl md:text-8xl"
+          className="font-display text-foreground text-5xl leading-[0.95] font-bold text-balance drop-shadow-[0_2px_20px_var(--background)] sm:text-7xl md:text-8xl"
         >
           EDICIONES URJC
         </SplitText>
@@ -96,7 +104,7 @@ export function Hero() {
           initial={{ opacity: 0, y: 18 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.9 }}
-          className="mx-auto mt-6 max-w-2xl text-base text-pretty text-white/70 sm:text-lg"
+          className="text-foreground/75 mx-auto mt-6 max-w-2xl text-base text-pretty sm:text-lg"
         >
           {siteConfig.description}
         </motion.p>
@@ -132,7 +140,7 @@ export function Hero() {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 1.6 }}
-        className="absolute bottom-8 left-1/2 z-10 flex -translate-x-1/2 flex-col items-center gap-2 text-white/50"
+        className="text-foreground/50 absolute bottom-8 left-1/2 z-10 flex -translate-x-1/2 flex-col items-center gap-2"
       >
         <span className="text-[11px] tracking-[0.3em] uppercase">Scroll</span>
         <motion.div
