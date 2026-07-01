@@ -31,7 +31,7 @@ export function PageHeader({
         {back && (
           <Link
             href={back.href}
-            className="text-muted-foreground hover:text-foreground mb-6 inline-flex items-center gap-2 text-sm transition-colors"
+            className="mb-6 inline-flex items-center gap-2 text-sm text-white/70 transition-colors hover:text-white"
           >
             <ArrowLeft className="size-4" /> {back.label}
           </Link>
@@ -41,11 +41,11 @@ export function PageHeader({
             {kicker}
           </span>
         )}
-        <h1 className="font-display mt-3 text-4xl leading-[1.05] font-bold text-balance sm:text-6xl">
+        <h1 className="font-display mt-3 text-4xl leading-[1.05] font-bold text-balance text-white sm:text-6xl">
           {title}
         </h1>
         {description && (
-          <p className="text-muted-foreground mt-5 max-w-2xl text-lg text-pretty">
+          <p className="mt-5 max-w-2xl text-lg text-pretty text-white/70">
             {description}
           </p>
         )}

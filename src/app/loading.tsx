@@ -7,7 +7,7 @@ export default function Loading() {
           <span className="border-t-violet absolute inset-2 animate-spin rounded-full border-2 border-transparent [animation-direction:reverse]" />
           <span className="bg-crimson absolute inset-1/2 size-2 -translate-x-1/2 -translate-y-1/2 rounded-full" />
         </div>
-        <p className="text-muted-foreground font-mono text-xs tracking-[0.3em] uppercase">
+        <p className="font-mono text-xs tracking-[0.3em] text-white/50 uppercase">
           Cargando Ediciones URJC…
         </p>
       </div>

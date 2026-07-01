@@ -76,17 +76,17 @@ export function Footer() {
               <span className="from-garnet to-red flex size-9 items-center justify-center rounded-xl bg-gradient-to-br text-white">
                 <BookOpenText className="size-4" />
               </span>
-              <span className="font-display text-base font-bold">
+              <span className="font-display text-base font-bold text-white">
                 EDICIONES<span className="text-gradient"> URJC</span>
               </span>
             </Link>
-            <p className="text-muted-foreground mt-4 max-w-sm text-sm">
+            <p className="mt-4 max-w-sm text-sm text-white/60">
               {siteConfig.description}
             </p>
-            <div className="text-muted-foreground mt-5 space-y-2 text-sm">
+            <div className="mt-5 space-y-2 text-sm text-white/60">
               <a
                 href={`mailto:${siteConfig.contact.email}`}
-                className="hover:text-foreground flex items-center gap-2 transition-colors"
+                className="flex items-center gap-2 transition-colors hover:text-white"
               >
                 <Mail className="size-4" /> {siteConfig.contact.email}
               </a>
@@ -104,7 +104,7 @@ export function Footer() {
                   rel="noreferrer"
                   aria-label={s.label}
                   data-cursor="hover"
-                  className="glass hover:bg-foreground/10 hover:text-garnet flex size-10 items-center justify-center rounded-xl transition-colors"
+                  className="flex size-10 items-center justify-center rounded-xl border border-white/10 bg-white/5 text-white/80 transition-colors hover:bg-white/10 hover:text-white"
                 >
                   <s.Icon className="size-[18px]" />
                 </a>
@@ -114,7 +114,7 @@ export function Footer() {
 
           {columns.map((col) => (
             <div key={col.title}>
-              <h3 className="font-display text-sm font-semibold">
+              <h3 className="font-display text-sm font-semibold text-white">
                 {col.title}
               </h3>
               <ul className="mt-4 space-y-2.5">
@@ -125,7 +125,7 @@ export function Footer() {
                       {...(l.external
                         ? { target: "_blank", rel: "noreferrer" }
                         : {})}
-                      className="text-muted-foreground hover:text-foreground inline-flex items-center gap-1 text-sm transition-colors"
+                      className="inline-flex items-center gap-1 text-sm text-white/60 transition-colors hover:text-white"
                     >
                       {l.label}
                       {l.external && <ArrowUpRight className="size-3.5" />}
@@ -138,14 +138,14 @@ export function Footer() {
         </div>
 
         <div className="border-border/60 mt-12 flex flex-col items-center justify-between gap-4 border-t pt-8 sm:flex-row">
-          <p className="text-muted-foreground text-xs">
+          <p className="text-xs text-white/50">
             © {new Date().getFullYear()} {siteConfig.name} ·{" "}
             {siteConfig.university}. Acceso abierto.
           </p>
           <a
             href="#top"
             data-cursor="hover"
-            className="text-muted-foreground hover:text-foreground flex items-center gap-2 text-xs transition-colors"
+            className="flex items-center gap-2 text-xs text-white/60 transition-colors hover:text-white"
           >
             Volver arriba <ArrowUp className="size-3.5" />
           </a>

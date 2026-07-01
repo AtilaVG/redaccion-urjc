@@ -12,7 +12,7 @@ export default function NotFound() {
       <h1 className="font-display text-gradient relative mt-4 text-7xl font-bold sm:text-9xl">
         Sin señal
       </h1>
-      <p className="text-muted-foreground relative mt-4 max-w-md text-pretty">
+      <p className="relative mt-4 max-w-md text-pretty text-white/70">
         Esta historia se ha perdido en el ciberespacio del campus. Volvamos a la
         redacción.
       </p>

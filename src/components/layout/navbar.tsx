@@ -12,6 +12,7 @@ import {
   Library,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { ThemeToggle } from "./theme-toggle";
 import { navItems, type NavItem } from "@/lib/nav";
 import { cn } from "@/lib/utils";
 
@@ -34,6 +35,11 @@ export function Navbar() {
     };
   }, [mobileOpen]);
 
+  // At the top of the page the nav floats over the always-dark hero/header,
+  // so its text must stay light regardless of theme. Once scrolled (or a
+  // dropdown opens) the bar gets a glass background and follows the theme.
+  const onDark = !scrolled && openIdx === null;
+
   return (
     <>
       <motion.header
@@ -55,7 +61,12 @@ export function Navbar() {
             <span className="from-garnet to-red flex size-9 items-center justify-center rounded-xl bg-gradient-to-br text-white shadow-[0_0_20px_-4px_var(--garnet)]">
               <BookOpenText className="size-4" />
             </span>
-            <span className="font-display text-sm leading-none font-bold tracking-tight">
+            <span
+              className={cn(
+                "font-display text-sm leading-none font-bold tracking-tight transition-colors",
+                onDark ? "text-white" : "text-foreground",
+              )}
+            >
               EDICIONES
               <span className="text-gradient"> URJC</span>
             </span>
@@ -69,11 +80,13 @@ export function Navbar() {
                 item={item}
                 isOpen={openIdx === i}
                 onOpen={() => setOpenIdx(i)}
+                onDark={onDark}
               />
             ))}
           </div>
 
           <div className="flex items-center gap-2">
+            <ThemeToggle className="hidden sm:flex" onDark={onDark} />
             <Button
               asChild
               size="sm"
@@ -86,7 +99,12 @@ export function Navbar() {
               type="button"
               aria-label="Abrir menú"
               onClick={() => setMobileOpen(true)}
-              className="glass flex size-10 items-center justify-center rounded-xl xl:hidden"
+              className={cn(
+                "flex size-10 items-center justify-center rounded-xl transition-colors xl:hidden",
+                onDark
+                  ? "border border-white/15 bg-white/5 text-white"
+                  : "glass",
+              )}
             >
               <Menu className="size-5" />
             </button>
@@ -103,12 +121,17 @@ function DesktopNavItem({
   item,
   isOpen,
   onOpen,
+  onDark,
 }: {
   item: NavItem;
   isOpen: boolean;
   onOpen: () => void;
+  onDark: boolean;
 }) {
   const hasChildren = !!item.children?.length;
+  const idle = onDark
+    ? "text-white/80 hover:text-white"
+    : "text-muted-foreground hover:text-foreground";
 
   if (!hasChildren) {
     return (
@@ -116,7 +139,10 @@ function DesktopNavItem({
         href={item.href ?? "#"}
         onMouseEnter={onOpen}
         data-cursor="hover"
-        className="text-muted-foreground hover:text-foreground rounded-lg px-3 py-2 text-[13px] font-medium transition-colors"
+        className={cn(
+          "rounded-lg px-3 py-2 text-[13px] font-medium transition-colors",
+          idle,
+        )}
       >
         {item.label}
       </Link>
@@ -130,9 +156,7 @@ function DesktopNavItem({
         data-cursor="hover"
         className={cn(
           "flex items-center gap-1 rounded-lg px-3 py-2 text-[13px] font-medium transition-colors",
-          isOpen
-            ? "text-foreground"
-            : "text-muted-foreground hover:text-foreground",
+          isOpen ? (onDark ? "text-white" : "text-foreground") : idle,
         )}
       >
         {item.label}
@@ -240,7 +264,7 @@ function MobileMenu({ open, onClose }: { open: boolean; onClose: () => void }) {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          className="bg-void/95 fixed inset-0 z-[95] overflow-y-auto backdrop-blur-xl xl:hidden"
+          className="bg-background/95 fixed inset-0 z-[95] overflow-y-auto backdrop-blur-xl xl:hidden"
         >
           <div className="flex items-center justify-between px-5 py-4">
             <span className="font-display text-sm font-bold">
@@ -330,7 +354,8 @@ function MobileMenu({ open, onClose }: { open: boolean; onClose: () => void }) {
               );
             })}
 
-            <div className="mt-6">
+            <div className="mt-6 flex items-center gap-3">
+              <ThemeToggle />
               <Button asChild variant="primary" onClick={onClose}>
                 <Link href="/publica/normas-de-envio">
                   Publicar con nosotros
