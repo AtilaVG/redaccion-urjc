@@ -1,8 +1,3 @@
-import fs from "fs";
-import path from "path";
-import matter from "gray-matter";
-import { withBasePath } from "@/lib/utils";
-
 export interface BlogPost {
   slug: string;
   title: string;
@@ -11,49 +6,71 @@ export interface BlogPost {
   author: string;
   date: string; // ISO
   tag: string;
-  tags: string[];
   readingTime: number;
 }
 
-const BLOG_DIR = path.join(process.cwd(), "content", "blog");
-
-function toIsoDate(value: unknown): string {
-  const d = value instanceof Date ? value : new Date(String(value));
-  return Number.isNaN(+d) ? String(value) : d.toISOString().slice(0, 10);
-}
-
-function loadPosts(): BlogPost[] {
-  if (!fs.existsSync(BLOG_DIR)) return [];
-  return fs
-    .readdirSync(BLOG_DIR)
-    .filter((f) => f.endsWith(".mdx") && !f.startsWith("_"))
-    .map((file) => {
-      const slug = file.replace(/\.mdx$/, "");
-      const { data } = matter(
-        fs.readFileSync(path.join(BLOG_DIR, file), "utf-8"),
-      );
-      return {
-        slug,
-        title: String(data.title ?? slug),
-        excerpt: String(data.excerpt ?? ""),
-        cover: withBasePath(String(data.cover ?? "/og.svg")),
-        author: String(data.author ?? "OfiLibre URJC"),
-        date: toIsoDate(data.date),
-        tag: String(data.tag ?? "OfiLibre"),
-        tags: Array.isArray(data.tags) ? data.tags.map(String) : [],
-        readingTime: Number(data.readingTime ?? 5),
-      };
-    })
-    .sort((a, b) => +new Date(b.date) - +new Date(a.date));
-}
-
-// Se carga una vez por proceso; en el export estático esto ocurre en build.
-export const posts: BlogPost[] = loadPosts();
+export const posts: BlogPost[] = [
+  {
+    slug: "que-es-el-acceso-abierto",
+    title:
+      "Acceso abierto explicado: qué significa publicar en abierto y por qué importa",
+    excerpt:
+      "Rutas verde y dorada, licencias Creative Commons y el impacto real de liberar el conocimiento.",
+    cover:
+      "https://images.unsplash.com/photo-1521587760476-6c12a4b040da?auto=format&fit=crop&w=1600&q=80",
+    author: "Equipo Ediciones URJC",
+    date: "2026-06-26",
+    tag: "Acceso abierto",
+    readingTime: 6,
+  },
+  {
+    slug: "como-elegir-revista",
+    title:
+      "Cómo elegir la revista adecuada para tu artículo (y evitar las depredadoras)",
+    excerpt:
+      "Una guía práctica para encontrar el medio idóneo y reconocer señales de alerta antes de enviar tu trabajo.",
+    cover:
+      "https://images.unsplash.com/photo-1457369804613-52c61a468e7d?auto=format&fit=crop&w=1600&q=80",
+    author: "Lucía Marín",
+    date: "2026-06-18",
+    tag: "Consejos",
+    readingTime: 7,
+  },
+  {
+    slug: "identificadores-orcid-doi",
+    title:
+      "ORCID, DOI y Handle: los identificadores que tu investigación necesita",
+    excerpt:
+      "Qué son, para qué sirven y cómo te ayudan a ganar visibilidad y atribución como autor o autora.",
+    cover:
+      "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=1600&q=80",
+    author: "Diego Ferrer",
+    date: "2026-06-09",
+    tag: "Identidad digital",
+    readingTime: 5,
+  },
+  {
+    slug: "datos-de-investigacion-fair",
+    title:
+      "Datos FAIR: publica tus datos de investigación para que cuenten de verdad",
+    excerpt:
+      "Principios Findable, Accessible, Interoperable y Reusable aplicados al día a día del investigador.",
+    cover:
+      "https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=1600&q=80",
+    author: "Ariadna Vega",
+    date: "2026-05-28",
+    tag: "Datos abiertos",
+    readingTime: 8,
+  },
+];
 
 export function getPost(slug: string) {
   return posts.find((p) => p.slug === slug);
 }
 
 export function getLatestPosts(limit?: number) {
-  return typeof limit === "number" ? posts.slice(0, limit) : posts;
+  const sorted = [...posts].sort(
+    (a, b) => +new Date(b.date) - +new Date(a.date),
+  );
+  return typeof limit === "number" ? sorted.slice(0, limit) : sorted;
 }

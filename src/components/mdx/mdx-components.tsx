@@ -1,5 +1,4 @@
 import type { MDXComponents } from "mdx/types";
-import { withBasePath } from "@/lib/utils";
 
 export const mdxComponents: MDXComponents = {
   h2: (props) => (
@@ -33,26 +32,11 @@ export const mdxComponents: MDXComponents = {
       {...props}
     />
   ),
-  a: ({ href, ...props }) => {
-    const internal =
-      typeof href === "string" &&
-      (href.startsWith("/") || href.startsWith("#"));
-    return (
-      <a
-        className="text-cyan underline-offset-4 hover:underline"
-        {...(internal ? {} : { target: "_blank", rel: "noreferrer" })}
-        href={typeof href === "string" ? withBasePath(href) : href}
-        {...props}
-      />
-    );
-  },
-  img: ({ src, alt, ...props }) => (
-    // eslint-disable-next-line @next/next/no-img-element
-    <img
-      className="border-border/60 my-8 w-full rounded-2xl border"
-      src={typeof src === "string" ? withBasePath(src) : src}
-      alt={alt ?? ""}
-      loading="lazy"
+  a: (props) => (
+    <a
+      className="text-cyan underline-offset-4 hover:underline"
+      target="_blank"
+      rel="noreferrer"
       {...props}
     />
   ),

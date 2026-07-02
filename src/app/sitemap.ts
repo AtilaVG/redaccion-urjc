@@ -2,7 +2,6 @@ import type { MetadataRoute } from "next";
 import { collections, publications } from "@/lib/collections";
 import { posts } from "@/lib/blog";
 import { siteConfig } from "@/lib/site";
-import { getEntries, type ContentSection } from "@/lib/content";
 
 export const dynamic = "force-static";
 
@@ -50,33 +49,10 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: 0.6,
   }));
 
-  const sections: ContentSection[] = [
-    "guias",
-    "acciones",
-    "pres",
-    "catalogo",
-    "fichas",
-  ];
-  const sectionRoutes: MetadataRoute.Sitemap = sections.flatMap((section) => [
-    {
-      url: `${base}/${section}`,
-      lastModified: now,
-      changeFrequency: "weekly" as const,
-      priority: 0.7,
-    },
-    ...getEntries(section).map((e) => ({
-      url: `${base}/${section}/${e.slug}`,
-      lastModified: e.date ? new Date(e.date) : now,
-      changeFrequency: "monthly" as const,
-      priority: 0.6,
-    })),
-  ]);
-
   return [
     ...staticRoutes,
     ...collectionRoutes,
     ...publicationRoutes,
     ...blogRoutes,
-    ...sectionRoutes,
   ];
 }

@@ -65,37 +65,6 @@ export const navItems: NavItem[] = [
     ],
   },
   { label: "Recursos", href: "/recursos" },
-  {
-    label: "OfiLibre",
-    variant: "list",
-    children: [
-      {
-        label: "Acciones",
-        href: "/acciones",
-        description: "Jornadas, cafés, asignaturas en abierto y normativa",
-      },
-      {
-        label: "Guías",
-        href: "/guias",
-        description: "Guías prácticas de cultura libre y publicación abierta",
-      },
-      {
-        label: "Fichas de software libre",
-        href: "/fichas",
-        description: "Aplicaciones libres recomendadas, con tutoriales",
-      },
-      {
-        label: "Presentaciones",
-        href: "/pres",
-        description: "Transparencias descargables en PDF y ODP",
-      },
-      {
-        label: "Catálogo de materiales",
-        href: "/catalogo",
-        description: "Materiales docentes libres del profesorado URJC",
-      },
-    ],
-  },
   { label: "Blog", href: "/blog" },
   { label: "Contacto", href: "/contacto" },
 ];
