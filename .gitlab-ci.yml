@@ -1,0 +1,28 @@
+# Construye el sitio Next.js como export estático y lo publica en GitLab Pages.
+# La URL y el basePath se derivan de CI_PAGES_URL, así que funciona igual en
+# <grupo>.gitlab.io (raíz) que en <grupo>.gitlab.io/<proyecto> o dominio propio.
+
+image: node:22
+
+pages:
+  stage: deploy
+  variables:
+    HUSKY: "0"
+  script:
+    - npm ci
+    - export NEXT_PUBLIC_SITE_URL="${CI_PAGES_URL}"
+    - export NEXT_PUBLIC_BASE_PATH="$(echo "${CI_PAGES_URL}" | sed -E 's#^https?://[^/]+##; s#/$##')"
+    - echo "Publicando en ${CI_PAGES_URL} (basePath='${NEXT_PUBLIC_BASE_PATH}')"
+    - npm run build
+  publish: out
+  artifacts:
+    paths:
+      - out
+  cache:
+    key:
+      files:
+        - package-lock.json
+    paths:
+      - .npm/
+  rules:
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH

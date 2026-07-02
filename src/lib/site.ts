@@ -5,7 +5,7 @@ export const siteConfig = {
   description:
     "El servicio de publicaciones de la Universidad Rey Juan Carlos. Revistas científicas, monografías, tesis y colecciones académicas en acceso abierto.",
   tagline: "Conocimiento abierto que deja huella",
-  url: "https://redaccion-urjc.vercel.app",
+  url: process.env.NEXT_PUBLIC_SITE_URL ?? "https://redaccion-urjc.vercel.app",
   locale: "es-ES",
   ogImage: "/og.svg",
   external: {
