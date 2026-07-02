@@ -1,0 +1,65 @@
+---
+title: Envío de correos masivos con Evolution
+excerpt: >-
+  Conoce la metodología que usamos en la OfiLibre para el envío de correos
+  masivos
+cover: /media/images/guias/evolution.png
+author: OfiLibre URJC
+date: "2025-07-25"
+tag: Recursos
+tags:
+  - Recursos
+  - software libre
+readingTime: 3
+---
+
+Como parte de la automatización de las tareas en la oficina, hemos desarrollado una serie de scripts para facilitar el envío de correos masivos, por ejemplo para el envío de certificados de asistencia de las [Jornadas de Cultura Libre](/acciones/jornadas/).
+
+En lugar de depender de soluciones privativas o de plataformas externas que no siempre se ajustan a nuestras necesidades, optamos por construir una herramienta sencilla y reutilizable con software libre, aprovechando herramientas como Python, Bash y el cliente de correo Evolution.
+
+## ¿Qué hace este sistema?
+
+El sistema parte de un archivo con una lista de destinatarios, y genera para cada uno un correo personalizado con su nombre, fecha, y otros datos relevantes. Opcionalmente, también se puede adjuntar un PDF generado automáticamente con los mismos datos personalizados (por ejemplo, un certificado o una carta formal).
+
+El envío no se hace automáticamente, sino que abre una ventana de redacción en Evolution para cada correo, permitiendo revisar antes de enviar. Esto nos parece una ventaja, ya que permite conservar el control del mensaje final, corregir si hace falta y evitar errores masivos.
+
+## ¿Qué lo hace útil?
+
+- **Es flexible:** Las plantillas se pueden adaptar fácilmente a distintos eventos o contextos.
+- **No requiere conexión a servicios externos:** No usamos servicios de terceros ni APIs privativas.
+- **Es revisable:** Al usar Evolution como cliente, cada correo se puede revisar antes de enviarse.
+- **Permite adjuntar documentos generados automáticamente:** Se pueden crear PDFs personalizados por destinatario con una imagen de cabecera opcional.
+
+## ¿Cómo funciona?
+
+El sistema está dividido en varios scripts:
+
+- Un script para rellenar automáticamente los mensajes y el contenido del PDF usando variables como `{nombre}`, `{fecha}`, etc.
+- Un script en Python que genera un PDF a partir de un texto plano y una imagen de cabecera.
+- Un script Bash que recorre la lista de destinatarios, genera el mensaje, crea el PDF si corresponde, y abre una nueva ventana de correo para cada destinatario con todo listo para enviar.
+
+## Dificultades encontradas
+
+Hubo algunos retos al trabajar con formatos de texto y PDF. Por ejemplo:
+
+- Asegurar que la imagen de cabecera no distorsione el diseño del PDF.
+- Resolver errores por caracteres especiales en los nombres o direcciones de correo.
+- Garantizar compatibilidad con Evolution, especialmente en el paso de datos por línea de comandos.
+
+También nos preocupaba que el proceso fuese demasiado automático, y decidimos que cada mensaje pase por revisión antes de ser enviado. Esto reduce la velocidad del proceso, pero aumenta la fiabilidad.
+
+## ¿Dónde lo usamos?
+
+Este sistema se ha usado ya para:
+
+- Enviar certificados a quienes asistieron a eventos organizados por la oficina.
+- Comunicar resoluciones o cartas a múltiples destinatarios de forma personalizada.
+- Enviar convocatorias con datos únicos para cada persona (fechas, enlaces, nombres, etc.).
+
+## Posibles mejoras
+
+- Enviar directamente desde línea de comandos si así se desea.
+- Exportar los mensajes como borradores listos en Evolution.
+- Añadir soporte para adjuntar múltiples archivos por destinatario.
+
+Este es un ejemplo claro de cómo el uso de herramientas libres puede facilitar procesos cotidianos en una institución pública, sin renunciar al control sobre los datos ni a la posibilidad de adaptarlos a nuestras necesidades reales. En caso de duda con el código, se puede consultar en [este repositorio de GitLab](https://gitlab.eif.urjc.es/ofilibre/code/), en la carpeta `automatizacion/correos/`.

@@ -1,0 +1,181 @@
+---
+title: Generación automática de vídeos con FFmpeg
+excerpt: >-
+  Desde la OfiLibre hemos generado una serie de scripts para automatizar la
+  generación de vídeos usando FFmpeg
+cover: /media/images/guias/ffmpeg.png
+author: OfiLibre URJC
+date: "2025-07-25"
+tag: Recursos
+tags:
+  - Recursos
+  - software libre
+readingTime: 5
+---
+
+# Generación automática de vídeos con FFmpeg
+
+La edición de vídeo puede ser un proceso largo, repetitivo y propenso a errores cuando se trabaja con grandes volúmenes de material. Para facilitar este trabajo y estandarizar la producción audiovisual, en OfLibre hemos desarrollado una serie de scripts que permiten automatizar la generación de vídeos a partir de configuraciones YAML. Estos scripts están diseñados para ser fácilmente adaptables a distintos contextos: desde vídeos formativos hasta entrevistas o presentaciones institucionales.
+
+En esta guía te presentamos tres enfoques prácticos, según el tipo de contenido que necesites montar.
+
+## ¿Qué es FFmpeg?
+
+FFmpeg es una herramienta de software libre y de código abierto que permite grabar, convertir, transmitir y procesar archivos de audio y vídeo. Su nombre proviene de **Fast Forward Moving Picture Experts Group**, en referencia al grupo que desarrolló los estándares MPEG.
+
+## Historia
+
+El proyecto FFmpeg fue iniciado en el año 2000 por Fabrice Bellard y ha sido mantenido y mejorado por una comunidad activa de desarrolladores. Desde sus inicios, se ha consolidado como una herramienta esencial para cualquier tarea relacionada con multimedia, especialmente en entornos automatizados o sin interfaz gráfica.
+
+## Plataformas
+
+FFmpeg es multiplataforma: funciona en **Linux**, **Windows**, **macOS**, y otros sistemas UNIX-like. También se utiliza como motor interno en muchas aplicaciones de edición de vídeo, plataformas de streaming, y servicios online.
+
+## ¿Cómo usar FFmpeg?
+
+Instalación:
+
+- Linux: `sudo apt install ffmpeg`
+- macOS: `brew install ffmpeg`
+- Windows: Descargar de [https://ffmpeg.org/](https://ffmpeg.org/) y añadir al PATH durante la instalación o utilizar Chocolatey vía `choco install ffmpeg`
+
+La herramienta se ejecuta desde línea de comandos. Su sintaxis general es:
+
+```bash
+ffmpeg -i entrada.ext opciones salida.ext
+```
+
+Por ejemplo:
+
+```bash
+ffmpeg -i video.mp4 -vf "scale=1280:720" -c:v libx264 salida_720p.mp4
+```
+
+Este comando toma video.mp4, lo redimensiona a 1280x720 píxeles y lo codifica en H.264.
+
+## Nociones básicas de FFmpeg
+
+Aquí se presentan algunos conceptos clave para trabajar con FFmpeg:
+
+### Entradas y salidas (-i)
+
+Cada comando requiere al menos un archivo de entrada (-i) y, generalmente, un archivo de salida.
+
+```bash
+ffmpeg -i entrada.mp4 salida.avi
+```
+
+### Filtros de vídeo (-vf) y audio (-af)
+
+Puedes aplicar transformaciones con filtros:
+
+```bash
+# Escalar resolución
+-vf "scale=1280:720"
+
+# Ajustar volumen
+-af "volume=2.0"
+```
+
+### Recortar vídeos
+
+```bash
+# Recortar los primeros 10 segundos
+ffmpeg -ss 10 -i entrada.mp4 -c copy salida.mp4
+
+# Extraer sólo un segmento de 30 segundos desde el segundo 60
+ffmpeg -ss 60 -t 30 -i entrada.mp4 -c copy corte.mp4
+```
+
+### Concatenación
+
+Para unir vídeos sin recodificar:
+
+```bash
+# Crear un archivo con la lista
+echo "file 'parte1.mp4'" > lista.txt
+echo "file 'parte2.mp4'" >> lista.txt
+
+# Concatenar
+ffmpeg -f concat -safe 0 -i lista.txt -c copy salida.mp4
+```
+
+### Transiciones y efectos (más avanzados)
+
+FFmpeg también permite efectos complejos como transiciones (xfade), mezclas de audio (acrossfade), superposición (overlay), etc. Ejemplo de transición entre dos vídeos:
+
+```bash
+ffmpeg -i video1.mp4 -i video2.mp4 -filter_complex \
+"[0][1]xfade=transition=fade:duration=1:offset=5" \
+-c:v libx264 salida.mp4
+```
+
+## Implementación de scripts
+
+## Script general para concatenación de imágenes y vídeos
+
+Este script permite definir en un archivo `config.yml` una lista de elementos (imágenes o vídeos), indicando sus duraciones, ajustes de volumen, recortes, etc. Cada elemento se procesa individualmente en un directorio temporal y luego se concatena de forma precisa, manteniendo audio y vídeo sincronizados.
+
+### Casos de uso:
+
+- Generar un vídeo a partir de varias diapositivas + clips.
+- Preparar píldoras informativas con múltiples bloques.
+- Estilizar recursos visuales sin necesidad de software de edición gráfico.
+
+### Ventajas:
+
+- Control total sobre resolución, FPS y codificación.
+- Manejo de recortes de vídeo (inicio y final).
+- Gestión de volumen individual por segmento.
+
+### Código
+
+Puedes encontrar el código y todos los detalles en [este repositorio](https://gitlab.eif.urjc.es/ofilibre/code), concretamente en la carpeta `/automatizacion/video-generator/`.
+
+## Script sencillo: imagen de portada + vídeo principal
+
+Este script está diseñado para casos muy comunes: cuando queremos que una imagen fija (por ejemplo, con título, autoría o logos institucionales) se muestre durante los primeros segundos del vídeo. Posteriormente, comienza el vídeo principal.
+
+### Casos de uso:
+
+- Cursos y asignaturas en abierto.
+- Presentaciones o conferencias.
+- Intros estáticas antes de un vídeo grabado.
+
+### Detalles técnicos:
+
+- La imagen se convierte en un vídeo de 5 segundos.
+- Ambos archivos se concatenan sin recomprimir el contenido, lo que acelera el proceso y evita pérdida de calidad.
+- Utiliza codificación `mpegts` para asegurar la concatenación correcta.
+
+### Código
+
+Puedes encontrar el código y todos los detalles en [este repositorio](https://gitlab.eif.urjc.es/ofilibre/code), concretamente en la carpeta `/automatizacion/videos-asignaturas-abierto/`.
+
+## Script completo para Cafés con OfLibre
+
+Este es el más elaborado de los tres. Está pensado para la edición de los vídeos pertenecientes a nuestra serie _Cafés con OfLibre_. El montaje final combina varios segmentos:
+
+1. **Intro institucional** (vídeo corto con música)
+2. **Imagen estática** con los datos del encuentro
+3. **Vídeo principal**, grabado en bruto
+4. **Cierre** institucional (otro vídeo)
+
+### Características destacadas:
+
+- Uso de `xfade` y `acrossfade` para transiciones suaves entre bloques.
+- Recorte opcional del vídeo principal (inicio y final).
+- Ajustes de volumen para cada segmento.
+- Estándar de calidad consistente (720p, audio a 44.1kHz, etc.).
+
+El guion completo se genera desde una configuración YAML (`config.yml`) donde se define la ruta a cada elemento y las duraciones/ajustes necesarios. Las transiciones se hacen con precisión, manteniendo sincronía entre imagen y sonido, lo que resulta en un producto final profesional y cohesionado.
+
+### Código
+
+Puedes encontrar el código y todos los detalles en [este repositorio](https://gitlab.eif.urjc.es/ofilibre/code), concretamente en la carpeta `/automatizacion/edicion-cafes/`.
+
+## Conclusión
+
+Automatizar la edición de vídeo no solo ahorra tiempo: también asegura que todos los contenidos producidos sigan un mismo estándar de calidad y estilo. Estos scripts, apoyados en `ffmpeg` y `yq`, son libres, adaptables y fáciles de integrar en cualquier flujo de trabajo basado en línea de comandos.
+
+Si usas estos recursos en tus proyectos, no dudes en compartir tu experiencia o proponer mejoras. ¡Seguimos construyendo herramientas libres, accesibles y útiles para todas y todos!

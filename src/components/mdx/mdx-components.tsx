@@ -33,15 +33,19 @@ export const mdxComponents: MDXComponents = {
       {...props}
     />
   ),
-  a: ({ href, ...props }) => (
-    <a
-      className="text-cyan underline-offset-4 hover:underline"
-      target="_blank"
-      rel="noreferrer"
-      href={typeof href === "string" ? withBasePath(href) : href}
-      {...props}
-    />
-  ),
+  a: ({ href, ...props }) => {
+    const internal =
+      typeof href === "string" &&
+      (href.startsWith("/") || href.startsWith("#"));
+    return (
+      <a
+        className="text-cyan underline-offset-4 hover:underline"
+        {...(internal ? {} : { target: "_blank", rel: "noreferrer" })}
+        href={typeof href === "string" ? withBasePath(href) : href}
+        {...props}
+      />
+    );
+  },
   img: ({ src, alt, ...props }) => (
     // eslint-disable-next-line @next/next/no-img-element
     <img

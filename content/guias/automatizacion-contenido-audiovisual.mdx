@@ -1,0 +1,395 @@
+---
+title: Automatización de la producción audiovisual con software libre
+excerpt: >-
+  Cómo automatizamos en OfiLibre la transcripción, subtitulado y publicación de
+  los Cafés con OfiLibre usando Whisper, Pyannote, FFmpeg y la API de YouTube
+cover: /media/images/guias/whisper-logo.png
+author: OfiLibre URJC
+date: "2026-05-19"
+tag: Recursos
+tags:
+  - Recursos
+  - software libre
+readingTime: 9
+---
+
+# Automatización de la producción audiovisual con software libre
+
+En la [OfiLibre](/ofilibre/) producimos semanalmente los [Cafés con OfiLibre](/acciones/cafes/), charlas informales de unos 15 minutos sobre software libre y conocimiento abierto. Cada episodio pasa por un proceso que va desde la grabación en directo hasta la publicación en múltiples plataformas. En guías anteriores ya explicamos cómo [editamos los vídeos con FFmpeg](/guias/generacion-videos-ffmpeg) y cuál es el [proceso general de producción](/guias/montaje-subida-de-cafes).
+
+Esta guía se centra en la fase que va **desde el vídeo editado hasta su publicación con subtítulos**, un proceso que hemos automatizado casi por completo con herramientas libres. Veremos cómo usamos Whisper para transcribir, Pyannote para identificar quién habla en cada momento, FFmpeg para incrustar los subtítulos y la API de YouTube para subir el resultado final.
+
+## Visión general del flujo
+
+El proceso completo se puede resumir así:
+
+```
+┌─────────────┐     ┌─────────────┐     ┌──────────────┐     ┌─────────────┐
+│  Vídeo      │     │  Whisper    │     │  Pyannote    │     │  FFmpeg     │
+│  editado    │────▶│ Transcripción│────▶│ Diarización  │────▶│ Subtítulos  │
+│  (.mp4)     │     │  (.srt)     │     │ (quién habla)│     │ incrustados │
+└─────────────┘     └─────────────┘     └──────────────┘     └──────┬──────┘
+                                                                     │
+                                                                     ▼
+                                                              ┌─────────────┐
+                                                              │  YouTube    │
+                                                              │  API        │
+                                                              │ (subida)    │
+                                                              └─────────────┘
+```
+
+Cada paso se ejecuta desde línea de comandos y puede encadenarse en un solo script. Veamos cada herramienta en detalle.
+
+## Whisper: transcripción automática de audio
+
+[Whisper](https://github.com/openai/whisper) es un modelo de reconocimiento de voz desarrollado por OpenAI y publicado bajo licencia MIT. Funciona en local, sin necesidad de conexión a internet ni de enviar datos a servidores externos, lo que lo hace ideal para entornos universitarios donde la privacidad de los contenidos es importante.
+
+### Instalación
+
+Whisper se instala como un paquete de Python. Es recomendable usar un entorno virtual:
+
+```bash
+python3 -m venv whisper-env
+source whisper-env/bin/activate
+pip install openai-whisper
+```
+
+Para aprovechar la GPU (lo que acelera el proceso entre 5 y 10 veces), es necesario tener instalados los drivers de NVIDIA y CUDA. Si no se dispone de GPU, Whisper funciona igualmente en CPU, aunque más lento.
+
+### Uso básico
+
+La forma más directa de transcribir un archivo es:
+
+```bash
+whisper cafe-2026-05-14.mp4 --language es --model medium --output_format srt
+```
+
+Esto genera un archivo `.srt` con los subtítulos sincronizados. Los parámetros más relevantes son:
+
+- `--language es`: indica el idioma del audio. Si se omite, Whisper lo detecta automáticamente, pero especificarlo mejora la precisión.
+- `--model medium`: selecciona el tamaño del modelo. Los disponibles son `tiny`, `base`, `small`, `medium` y `large`. El modelo `medium` ofrece un buen equilibrio entre precisión y velocidad para español.
+- `--output_format srt`: formato de salida. También admite `vtt`, `txt`, `tsv` y `json`.
+
+### Modelos disponibles
+
+| Modelo | Parámetros | VRAM necesaria | Velocidad relativa |
+| ------ | ---------- | -------------- | ------------------ |
+| tiny   | 39 M       | ~1 GB          | ~32x               |
+| base   | 74 M       | ~1 GB          | ~16x               |
+| small  | 244 M      | ~2 GB          | ~6x                |
+| medium | 769 M      | ~5 GB          | ~2x                |
+| large  | 1550 M     | ~10 GB         | 1x                 |
+
+Para los Cafés con OfiLibre usamos `medium` porque ofrece buena calidad en español sin requerir una GPU de gama alta. Si tu equipo tiene una tarjeta con al menos 10 GB de VRAM, `large` dará resultados aún mejores.
+
+### Ejemplo de salida (.srt)
+
+```srt
+1
+00:00:01,000 --> 00:00:04,500
+Bienvenidos a un nuevo Café con OfiLibre.
+
+2
+00:00:04,500 --> 00:00:08,200
+Hoy vamos a hablar sobre licencias de software libre.
+
+3
+00:00:08,200 --> 00:00:12,800
+Tenemos con nosotros a nuestra invitada, que nos va
+a contar su experiencia con el proyecto.
+```
+
+## Pyannote: saber quién habla en cada momento
+
+La transcripción que genera Whisper no distingue entre hablantes. Para saber quién dice qué en cada momento, usamos [Pyannote](https://github.com/pyannote/pyannote-audio), una biblioteca de Python especializada en diarización de hablantes, publicada bajo licencia MIT.
+
+La diarización es el proceso de segmentar un audio según las personas que intervienen, etiquetando cada fragmento con un identificador de hablante (SPEAKER_00, SPEAKER_01, etc.).
+
+### Instalación
+
+```bash
+pip install pyannote.audio
+```
+
+Pyannote requiere aceptar las condiciones de uso de los modelos en [Hugging Face](https://huggingface.co/pyannote/speaker-diarization-3.1) y obtener un token de acceso.
+
+### Uso desde Python
+
+```python
+from pyannote.audio import Pipeline
+
+pipeline = Pipeline.from_pretrained(
+    "pyannote/speaker-diarization-3.1",
+    use_auth_token="TU_TOKEN_HUGGINGFACE"
+)
+
+diarization = pipeline("cafe-2026-05-14.wav")
+
+for turn, _, speaker in diarization.itertracks(yield_label=True):
+    print(f"{turn.start:.1f} - {turn.end:.1f}: {speaker}")
+```
+
+La salida tiene este aspecto:
+
+```
+0.0 - 4.5: SPEAKER_00
+4.5 - 12.8: SPEAKER_01
+12.8 - 15.3: SPEAKER_00
+```
+
+### Combinar Whisper y Pyannote
+
+El paso clave es cruzar los tiempos de los subtítulos de Whisper con los segmentos de diarización de Pyannote. Para cada bloque de subtítulo, buscamos qué hablante tiene la mayor superposición temporal y le asignamos su etiqueta:
+
+```python
+import re
+
+def parse_srt(srt_path):
+    """Lee un archivo .srt y devuelve una lista de bloques."""
+    with open(srt_path) as f:
+        content = f.read()
+    pattern = r"(\d+)\n(\d{2}:\d{2}:\d{2},\d{3}) --> (\d{2}:\d{2}:\d{2},\d{3})\n(.*?)(?=\n\n|\Z)"
+    return re.findall(pattern, content, re.DOTALL)
+
+def time_to_seconds(t):
+    """Convierte '00:01:23,456' a segundos."""
+    h, m, rest = t.split(":")
+    s, ms = rest.split(",")
+    return int(h)*3600 + int(m)*60 + int(s) + int(ms)/1000
+
+def assign_speakers(srt_blocks, diarization):
+    """Asigna un hablante a cada bloque de subtítulo."""
+    result = []
+    for idx, start, end, text in srt_blocks:
+        s = time_to_seconds(start)
+        e = time_to_seconds(end)
+        best_speaker = "UNKNOWN"
+        best_overlap = 0
+        for turn, _, speaker in diarization.itertracks(yield_label=True):
+            overlap = min(e, turn.end) - max(s, turn.start)
+            if overlap > best_overlap:
+                best_overlap = overlap
+                best_speaker = speaker
+        result.append((idx, start, end, f"[{best_speaker}] {text}"))
+    return result
+```
+
+El resultado es un archivo `.srt` donde cada bloque indica quién está hablando:
+
+```srt
+1
+00:00:01,000 --> 00:00:04,500
+[SPEAKER_00] Bienvenidos a un nuevo Café con OfiLibre.
+
+2
+00:00:04,500 --> 00:00:08,200
+[SPEAKER_00] Hoy vamos a hablar sobre licencias.
+
+3
+00:00:08,200 --> 00:00:12,800
+[SPEAKER_01] Muchas gracias por la invitación.
+```
+
+Los identificadores genéricos (SPEAKER_00, SPEAKER_01) se pueden sustituir manualmente por los nombres reales de los participantes con un simple buscar y reemplazar:
+
+```bash
+sed -i 's/SPEAKER_00/Jesús/g; s/SPEAKER_01/María/g' subtitulos.srt
+```
+
+## FFmpeg: incrustar subtítulos en el vídeo
+
+Una vez tenemos el archivo `.srt` con la transcripción y los hablantes identificados, usamos [FFmpeg](https://ffmpeg.org/) para incrustar los subtítulos en el vídeo. Ya hemos tratado FFmpeg en profundidad en nuestra [guía de generación de vídeos](/guias/generacion-videos-ffmpeg), así que aquí nos centramos en el subtitulado.
+
+Hay dos formas de añadir subtítulos:
+
+### Subtítulos blandos (soft subs)
+
+Se empaquetan dentro del contenedor de vídeo como una pista separada. El espectador puede activarlos o desactivarlos:
+
+```bash
+ffmpeg -i video.mp4 -i subtitulos.srt \
+  -c copy -c:s mov_text \
+  video_con_subs.mp4
+```
+
+### Subtítulos duros (hard subs)
+
+Se "queman" directamente sobre la imagen del vídeo. Son siempre visibles y no se pueden desactivar, pero garantizan que se vean en cualquier reproductor:
+
+```bash
+ffmpeg -i video.mp4 \
+  -vf "subtitles=subtitulos.srt:force_style='FontSize=22,PrimaryColour=&H00FFFFFF,OutlineColour=&H00000000,Outline=2'" \
+  -c:a copy \
+  video_subtitulado.mp4
+```
+
+Los parámetros de `force_style` permiten personalizar la apariencia de los subtítulos usando la sintaxis de ASS/SSA. Los más útiles son:
+
+- `FontSize`: tamaño de la fuente.
+- `PrimaryColour`: color del texto en formato `&HAABBGGRR`.
+- `OutlineColour`: color del borde.
+- `Outline`: grosor del borde en píxeles.
+- `FontName`: tipografía (debe estar instalada en el sistema).
+
+Para los Cafés con OfiLibre usamos subtítulos blandos para YouTube (la plataforma los gestiona nativamente) y duros para las versiones que se distribuyen por otros canales.
+
+## API de YouTube: subida automatizada
+
+El último paso del flujo es subir el vídeo editado y subtitulado a YouTube. La [API de YouTube Data v3](https://developers.google.com/youtube/v3) permite automatizar esta tarea desde un script.
+
+### Configuración previa
+
+Antes de poder usar la API es necesario crear un proyecto en la [Google Cloud Console](https://console.cloud.google.com/), habilitar la API de YouTube Data v3 y obtener las credenciales OAuth 2.0. El proceso se resume en:
+
+1. Crear un proyecto en Google Cloud Console.
+2. Habilitar la API "YouTube Data API v3".
+3. Configurar la pantalla de consentimiento OAuth.
+4. Crear credenciales de tipo "ID de cliente OAuth" para aplicación de escritorio.
+5. Descargar el archivo `client_secrets.json`.
+
+### Dependencias
+
+```bash
+pip install google-api-python-client google-auth-oauthlib
+```
+
+### Script de subida
+
+```python
+import os
+from google.oauth2.credentials import Credentials
+from google_auth_oauthlib.flow import InstalledAppFlow
+from googleapiclient.discovery import build
+from googleapiclient.http import MediaFileUpload
+
+SCOPES = ["https://www.googleapis.com/auth/youtube.upload"]
+
+def authenticate():
+    """Autentica con OAuth 2.0 y devuelve el servicio."""
+    flow = InstalledAppFlow.from_client_secrets_file(
+        "client_secrets.json", SCOPES
+    )
+    credentials = flow.run_local_server(port=0)
+    return build("youtube", "v3", credentials=credentials)
+
+def upload_video(youtube, filepath, title, description, tags):
+    """Sube un vídeo a YouTube."""
+    body = {
+        "snippet": {
+            "title": title,
+            "description": description,
+            "tags": tags,
+            "categoryId": "27",  # Educación
+            "defaultLanguage": "es",
+        },
+        "status": {
+            "privacyStatus": "unlisted",  # No listado inicialmente
+            "selfDeclaredMadeForKids": False,
+        },
+    }
+    media = MediaFileUpload(filepath, chunksize=-1, resumable=True)
+    request = youtube.videos().insert(
+        part="snippet,status", body=body, media_body=media
+    )
+    response = request.execute()
+    print(f"Vídeo subido: https://www.youtube.com/watch?v={response['id']}")
+    return response["id"]
+
+def upload_captions(youtube, video_id, srt_path, language="es"):
+    """Sube subtítulos a un vídeo ya publicado."""
+    body = {
+        "snippet": {
+            "videoId": video_id,
+            "language": language,
+            "name": f"Subtítulos ({language})",
+        }
+    }
+    media = MediaFileUpload(srt_path)
+    youtube.captions().insert(
+        part="snippet", body=body, media_body=media
+    ).execute()
+    print(f"Subtítulos ({language}) subidos correctamente.")
+```
+
+### Uso
+
+```python
+youtube = authenticate()
+
+video_id = upload_video(
+    youtube,
+    filepath="cafe-2026-05-14-editado.mp4",
+    title="Licencias de software libre - Café con OfiLibre",
+    description="Charla sobre los tipos de licencias libres más comunes.",
+    tags=["software libre", "OfiLibre", "URJC", "licencias"],
+)
+
+upload_captions(youtube, video_id, "subtitulos.srt", language="es")
+```
+
+La primera vez que se ejecute, se abrirá una ventana del navegador para autorizar la aplicación. Las credenciales se pueden guardar en un archivo local para que las ejecuciones posteriores no requieran intervención manual.
+
+## Uniendo todo: el script completo
+
+En la práctica, todo el flujo se encadena en un script bash que recibe como parámetro el archivo de vídeo editado y ejecuta todos los pasos de forma secuencial:
+
+```bash
+#!/bin/bash
+# automatizar-cafe.sh - Flujo completo de postproducción
+# Uso: ./automatizar-cafe.sh video_editado.mp4 "Título del café" "Descripción"
+
+VIDEO="$1"
+TITLE="$2"
+DESC="$3"
+BASENAME="${VIDEO%.*}"
+
+echo "=== 1. Transcribiendo con Whisper ==="
+whisper "$VIDEO" --language es --model medium --output_format srt \
+  --output_dir ./subs/
+
+echo "=== 2. Diarizando con Pyannote ==="
+python3 diarize.py "$VIDEO" "./subs/${BASENAME}.srt" \
+  --output "./subs/${BASENAME}_diarized.srt"
+
+echo "=== 3. Incrustando subtítulos con FFmpeg ==="
+ffmpeg -i "$VIDEO" -i "./subs/${BASENAME}_diarized.srt" \
+  -c copy -c:s mov_text \
+  "${BASENAME}_final.mp4"
+
+echo "=== 4. Subiendo a YouTube ==="
+python3 upload_youtube.py \
+  --video "${BASENAME}_final.mp4" \
+  --srt "./subs/${BASENAME}_diarized.srt" \
+  --title "$TITLE" \
+  --description "$DESC"
+
+echo "=== Proceso completado ==="
+```
+
+## Requisitos de hardware
+
+Para ejecutar todo el flujo en un equipo local, las necesidades son moderadas:
+
+- **CPU**: cualquier procesador moderno (i5/Ryzen 5 o superior). La transcripción en CPU tarda entre 3 y 5 veces la duración del vídeo.
+- **GPU** (recomendada): una NVIDIA con al menos 4 GB de VRAM para el modelo `medium` de Whisper. Con GPU, la transcripción de un vídeo de 15 minutos tarda aproximadamente 2-3 minutos.
+- **RAM**: 8 GB mínimo, 16 GB recomendados.
+- **Almacenamiento**: cada episodio editado ocupa entre 200 MB y 1 GB según la resolución.
+
+## Licencias del software utilizado
+
+Todo el software mencionado en esta guía es libre o de código abierto:
+
+- **Whisper**: licencia MIT.
+- **Pyannote**: licencia MIT.
+- **FFmpeg**: licencias LGPL / GPL.
+- **google-api-python-client**: licencia Apache 2.0.
+
+Esto significa que puedes usarlo, modificarlo y redistribuirlo libremente, tanto en proyectos personales como institucionales.
+
+## Conclusión
+
+Automatizar la producción audiovisual no es solo una cuestión de eficiencia: es también una forma de garantizar la accesibilidad de los contenidos. Los subtítulos automáticos permiten que personas con discapacidad auditiva puedan seguir las charlas, y la diarización añade contexto sobre quién está hablando.
+
+El flujo que hemos descrito — Whisper, Pyannote, FFmpeg, YouTube API — se ejecuta completamente en local con herramientas libres, no depende de servicios de terceros para el procesamiento y puede adaptarse a cualquier tipo de contenido audiovisual periódico.
+
+Si quieres consultar el código completo de los scripts que usamos, puedes encontrarlos en [nuestro repositorio](https://gitlab.eif.urjc.es/ofilibre/code/). Y si produces contenido audiovisual en tu facultad o departamento, no dudes en contactar con la [OfiLibre](/contacto/) para que te ayudemos a poner en marcha un flujo similar.

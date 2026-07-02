@@ -3,7 +3,7 @@ import path from "path";
 import matter from "gray-matter";
 
 export async function getMdxBody(
-  dir: "publicaciones" | "blog",
+  dir: string,
   slug: string,
 ): Promise<string | null> {
   try {
